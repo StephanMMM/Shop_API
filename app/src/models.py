@@ -6,17 +6,17 @@ class Users(Base):
     __tablename__ = "users"
 
     user_id = Column(Integer, primary_key=True, index=True)
-    email = Column(String, unique=True, index=True)
-    password_hash = Column(String)
-    shipping_address = Column(String)
+    email = Column(String(100), unique=True, index=True)
+    password_hash = Column(String(255))
+    shipping_address = Column(String(255))
     points = Column(Integer)
 
 class Products(Base):
     __tablename__ = "products"
 
     product_id = Column(Integer, primary_key=True, index=True)
-    title = Column(String, index=True)
-    description = Column(String)
+    title = Column(String(50), index=True)
+    description = Column(String(255))
     price = Column(Integer)
     owner_id = Column(Integer, ForeignKey("users.user_id"))
 
