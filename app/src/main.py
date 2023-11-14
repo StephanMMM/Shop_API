@@ -20,18 +20,22 @@ async def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
     new_user = db_crud.create_user(user, db)
     return new_user
 
-@app.post("/users/exhibits/create", response_model=schemas.User)
-async def create_exhibit(user_id: int, product: schemas.ProductCreate, db: Session = Depends(get_db)):
-    return {}
+@app.post("/products/create", response_model=schemas.Product)
+async def create_product(product: schemas.ProductCreate, db: Session = Depends(get_db)):
+    new_product = db_crud.create_product(product, db)
+    return new_product
 
-@app.put("/users/exhibits/update", response_model=schemas.User)
-async def update_exhibit(user_id: int, product: schemas.ProductUpdate, db: Session = Depends(get_db)):
-    return {}
+@app.put("/products/update", response_model=schemas.Product)
+async def update_product(product: schemas.ProductUpdate, db: Session = Depends(get_db)):
+    updated_product = db_crud.update_product(product, db)
+    return updated_product
 
-@app.delete("/users/exhibits/delete", response_model=schemas.User)
-async def delete_exhibit(user_id: int, product_id: int, db: Session = Depends(get_db)):
-    return {}
+@app.delete("/products/delete", response_model=schemas.Product)
+async def delete_product(product_id: int, db: Session = Depends(get_db)):
+    deleted_product = db_crud.delete_product(product_id, db)
+    return deleted_product
 
-@app.post("/transaction", response_model=schemas.Order)
-async def create_transaction(seller_id: int, buyer_id: int, product_id: int, quantity: int, db: Session = Depends(get_db)):
-    return {}
+@app.post("/order", response_model=schemas.Order)
+async def create_order(order: schemas.OrderCreate, db: Session = Depends(get_db)):
+    new_order = db_crud.create_order(order, db)
+    return new_order
