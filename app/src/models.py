@@ -2,7 +2,7 @@ from sqlalchemy import Column, ForeignKey, Integer, String, DateTime
 from sqlalchemy.orm import relationship
 from .database import Base
 
-class User(Base):
+class Users(Base):
     __tablename__ = "users"
 
     user_id = Column(Integer, primary_key=True, index=True)
@@ -11,16 +11,14 @@ class User(Base):
     shipping_address = Column(String)
     points = Column(Integer)
 
-
 class Products(Base):
     __tablename__ = "products"
 
     product_id = Column(Integer, primary_key=True, index=True)
     title = Column(String, index=True)
-    description = Column(String, index=True)
+    description = Column(String)
     price = Column(Integer)
-
-    owner = Column(Integer, ForeignKey("users.user_id"))
+    owner_id = Column(Integer, ForeignKey("users.user_id"))
 
 class Orders(Base):
     __tablename__ = "orders"

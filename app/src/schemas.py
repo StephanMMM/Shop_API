@@ -19,8 +19,12 @@ class Product(ProductBase):
     class Config:
         orm_mode = True
 
-class ProductUpdate(Product):
-    pass
+class ProductUpdate(BaseModel):
+    product_id: int
+    title: str | None = None
+    description: str | None = None
+    price: int | None = None
+    owner_id: int | None = None
 
 ### User Models ###
 class UserBase(BaseModel):
@@ -34,21 +38,28 @@ class User(UserBase):
     user_id: int
     points: int
     shipping_address: str | None = None
-    exhibits: List[Product | None] = None
 
     class Config:
         orm_mode = True
 
+class UserUpdate(BaseModel):
+    user_id: int
+    email: str | None = None
+    points: int | None = None
+    shipping_address: str | None = None
 
 ### Order Models ###
 class OrderBase(BaseModel):
-    order_id: str
     buyer_id: int
     seller_id: int
     product_id: int
     quantity: int
-    date: datetime
+
+class OrderCreate(OrderBase):
+    pass
 
 class Order(OrderBase):
+    order_id: str
+    date: datetime
     class Config:
         orm_mode = True
