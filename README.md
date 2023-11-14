@@ -16,6 +16,6 @@ API Documentation: http://127.0.0.1/docs
 
 ## Database 
 ### Classes and Attributes
-- User (email_address, password_hash, shipping_address, points, exhibit(List(Products)))
+- User (email_address, password_hash, shipping_address, points))
 - Product (id, title, description, price)
 - PurchaseHistory (purchase_id, List(product, quantity, date))
