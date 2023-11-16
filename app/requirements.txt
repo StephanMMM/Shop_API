@@ -5,4 +5,4 @@ sqlalchemy
 cryptography
 passlib
 pytest
-PyMySQL
+requests
