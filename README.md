@@ -16,14 +16,18 @@ Before proceeding, ensure you have Docker installed on your system. If not, you 
 ## Usage
 
 To use the application, first, create a Docker network:
-
-    docker network create shop-network
+(sudo is not required for the next commands but it enables a quick setup without worrying about permissions.)
+    sudo docker network create shop_network
 
 Then, start the application using Docker Compose:
 
-    docker compose up --build -d
+    sudo docker compose up --build -d
 
-Once the API container is running, you can access the documentation at http://127.0.0.1/docs.
+To run the test container using Docker Compose:
+
+    sudo docker compose -f docker-compose.test.yml up --build -d
+
+Once the API container is running, you can access the interactive documentation at http://127.0.0.1/docs.
 ## Database
 
 The application uses the following classes with their respective attributes:
