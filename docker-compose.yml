@@ -2,26 +2,39 @@ version: "3.9"
 
 services:
   db:
+    container_name: "db"
     image: mysql:8.0
     restart: always
-    environment:
-      MYSQL_DATABASE: ${MYSQL_DATABASE}
-      MYSQL_USER: ${MYSQL_USER}
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-      MYSQL_HOSTNAME: ${MYSQL_HOSTNAME}
+    env_file:
+      - ./env
     ports:
       - "3306:3306"
+    volumes:
+      - shop-mysql:/var/lib/mysql
+    networks:
+      - shop_network
 
   app:
+    container_name: "shop_api"
+    depends_on:
+      - db
+    env_file:
+      - ./env
     build:
       context: ./app
       dockerfile: Dockerfile
-    depends_on:
-      - db
     ports:
       - "80:80"
+    expose:
+      - 80
+    volumes:
+      - shop-api:/var/lib/api
+    networks:
+      - shop_network
+    entrypoint: ["uvicorn", "src.main:app", "--proxy-headers", "--host", "0.0.0.0", "--port", "80"]
 networks:
-  default:
-    external:
-      name: shop-network
+  shop_network:
+    external: true
+volumes:
+  shop-mysql:
+  shop-api:
