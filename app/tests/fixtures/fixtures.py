@@ -1,79 +1,55 @@
-import json
+import pytest
+import time
 
-from pytest
-from sqlalchemy import text
-from Shop_API.app.src import database
+from starlette.testclient import TestClient
+from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy.orm import Session, sessionmaker
+from sqlalchemy.orm.session import close_all_sessions
+from sqlalchemy_utils import database_exists, drop_database
 
-database.Base.metadata.create_all(bind=database.engine)
-@pytest.fixture
-def db_fixture(db):
-    db = database.SessionLocal()
-    session = db()
+from ...src import main, models, database
 
-    users_data = [
-        (1, "johndoe@example.com", "password123", "123 Main Street, Anytown, CA 94538", 0),
-        (2, "janedoe@example.com", "password456", "456 Elm Street, Anytown, CA 94538", 0),
-        (3, "peterjones@example.com", "password789", "789 Oak Street, Anytown, CA 94538", 0),
-        (4, "marygreen@example.com", "password101", "101 Maple Street, Anytown, CA 94538", 0),
-        (5, "alexsmith@example.com", "password12345", "12345 Pine Street, Anytown, CA 94538", 0),
-    ]
+# TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=database.engine)
+# database.Base.metadata.create_all(bind=database.engine)
+#
+# def override_get_db():
+#     try:
+#         db = TestingSessionLocal()
+#         yield db
+#     finally:
+#         db.close()
+#
+# main.app.dependency_overrides[main.get_db] = override_get_db
+test_client = TestClient(main.app)
 
-    insert_users_stmt = text("""
-    INSERT INTO users (user_id, email, password_hash, shipping_address, points)
-    VALUES (:user_id, :email, :password_hash, :shipping_address, :points)
-    """)
+@pytest.fixture(scope="function")
+def temp_test_db():
+    if database_exists(database.SQLALCHEMY_DATABASE_URL):
+        DeleteSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=database.engine)
+        db = DeleteSessionLocal()
+        db.query(models.Orders).delete()
+        db.query(models.Products).delete()
+        db.query(models.Users).delete()
+        db.commit()
+        close_all_sessions()
+    database.Base.metadata.create_all(bind=database.engine)
+    TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=database.engine)
+    db = TestingSessionLocal()
 
-    session.execute(insert_users_stmt, users_data)
+    def get_db_for_testing():
+        try:
+            yield db
+            db.commit()
+        except SQLAlchemyError as e:
+            assert e is not None
+            db.rollback()
 
-    # Insert data into Products table
-    products_data = [
-        (1, "Laptop",
-         "A powerful laptop for all your needs, featuring a sleek design, long-lasting battery, and cutting-edge technology.",
-         1200, 1),
-        (2, "Smartphone",
-         "A sleek and stylish smartphone with a high-resolution display, powerful processor, and advanced camera system.",
-         600, 2),
-        (3, "TV",
-         "A large and vibrant TV for your home theater experience, offering stunning 4K resolution, immersive sound, and smart features.",
-         800, 3),
-        (4, "Headphones",
-         "Noise-canceling headphones for immersive listening, providing exceptional sound quality, comfortable fit, and long-lasting battery life.",
-         200, 4),
-        (5, "Books",
-         "A collection of classic novels, including The Great Gatsby, To Kill a Mockingbird, and Pride and Prejudice.",
-         50, 5),
-    ]
+    main.app.dependency_overrides[main.get_db] = get_db_for_testing
+    yield db
+    db.rollback()
+    close_all_sessions()
+    database.engine.dispose()
 
-    insert_products_stmt = text("""
-    INSERT INTO products (product_id, title, description, price, owner_id)
-    VALUES (:product_id, :title, :description, :price, :owner_id)
-    """)
-
-    session.execute(insert_products_stmt, products_data)
-
-    # Insert data into Orders table
-    orders_data = [
-        (1, 1, 2, 1, 1, "2023-11-15"),
-        (2, 2, 3, 2, 1, "2023-11-16"),
-        (3, 3, 4, 3, 1, "2023-11-17"),
-        (4, 4, 5, 4, 1, "2023-11-16"),
-        (5, 5, 1, 5, 1, "2023-11-17"),
-    ]
-
-    insert_orders_stmt = text("""
-    INSERT INTO orders (order_id, buyer_id, seller_id, product_id, quantity, date)
-    VALUES (:order_id, :buyer_id, :seller_id, :product_id, :quantity, :date)
-    """)
-
-    session.execute(insert_orders_stmt, orders_data)
-    session.flush()
-    session.commit()
-    session.refresh()
-    try:
-        yield session
-    finally:
-        session.rollback()
-        session.close()
 
 @pytest.fixture
 def users_create_data():
@@ -82,7 +58,14 @@ def users_create_data():
         "password_plain": "testword123",
         "shipping_address": "Dokoka in Japan, 000-1234"
     }
-    return json.dumps(data)
+    return data
+def users_create_data_2():
+    data = {
+        "email": "second@example.com",
+        "password_plain": "testword",
+        "shipping_address": "Somewhere, 123456"
+    }
+    return data
 
 @pytest.fixture
 def products_create_data():
@@ -92,25 +75,27 @@ def products_create_data():
         "price": 123,
         "owner_id": 1
     }
-    return json.dumps(data)
+    return data
+
 
 @pytest.fixture
 def products_update_data():
     data = {
-        "product_id": 6,
+        "product_id": 1,
         "title": "Updated Product",
         "description": "This product has been improved.",
         "price": 199,
         "owner_id": 1
     }
-    return json.dumps(data)
+    return data
+
 
 @pytest.fixture
 def order_data():
     data = {
         "buyer_id": 1,
         "seller_id": 2,
-        "product_id": 6,
+        "product_id": 1,
         "quantity": 2
     }
-    return json.dumps(data)
+    return data
