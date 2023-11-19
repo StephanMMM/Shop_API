@@ -1,8 +1,11 @@
+import time
+
 from fastapi import Depends, FastAPI
 from sqlalchemy.orm import Session
 
 from . import db_crud, schemas, database
 
+time.sleep(15)
 database.Base.metadata.create_all(bind=database.engine)
 
 app = FastAPI()
