@@ -42,7 +42,7 @@ def create_product(product: schemas.ProductCreate, db: Session):
             raise ValueError("Price is required for products.")
         if not product.owner_id:
             raise ValueError("Owner(User) is required for products.")
-        user = db.query(models.Users).get(product.owner_id)
+        user = db.get(models.Users, product.owner_id)
         if user is None:
             raise KeyError("Owner ID does not exist.")
     except ValueError as e:
@@ -65,7 +65,7 @@ def create_product(product: schemas.ProductCreate, db: Session):
 
 def update_product(product: schemas.ProductUpdate, db: Session):
     try:
-        existing_product = db.query(models.Products).get(product.product_id)
+        existing_product = db.get(models.Products, product.product_id)
         if existing_product is None:
             raise KeyError("Product does not exist.")
     except KeyError as e:
@@ -84,7 +84,7 @@ def update_product(product: schemas.ProductUpdate, db: Session):
 
 def delete_product(product_id: int, db: Session):
     try:
-        deletion_product = db.query(models.Products).get(product_id)
+        deletion_product = db.get(models.Products, product_id)
         if deletion_product is None:
             raise KeyError("Product does not exist.")
         db.delete(deletion_product)
@@ -99,13 +99,13 @@ def delete_product(product_id: int, db: Session):
 
 def create_order(order: schemas.OrderCreate, db: Session):
     try:
-        seller = db.query(models.Users).get(order.seller_id)
+        seller = db.get(models.Users, order.seller_id)
         if seller is None:
             raise ValueError("Seller does not exist.")
-        buyer = db.query(models.Users).get(order.buyer_id)
+        buyer = db.get(models.Users, order.buyer_id)
         if buyer is None:
             raise ValueError("Buyer does not exist.")
-        product = db.query(models.Products).get(order.product_id)
+        product = db.get(models.Products, order.product_id)
         if product is None:
             raise ValueError("Product does not exist.")
         if product.owner_id != order.seller_id:
@@ -140,7 +140,7 @@ def create_order(order: schemas.OrderCreate, db: Session):
 
 def update_user(user: schemas.UserUpdate, db: Session):
     try:
-        existing_user = db.query(models.Users).get(user.user_id)
+        existing_user = db.get(models.Users, user.user_id)
         if existing_user is None:
             raise KeyError("Product does not exist.")
     except KeyError as e:
