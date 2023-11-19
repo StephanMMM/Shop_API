@@ -14,7 +14,7 @@ services:
     networks:
       - shop_network
 
-  app:
+  test:
     container_name: "shop_api-test"
     depends_on:
       - test_db
