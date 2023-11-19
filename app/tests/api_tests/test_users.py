@@ -6,7 +6,7 @@ from ..fixtures.fixtures import (test_client,
 def test_users_create_valid(users_create_data, temp_test_db):
     response = test_client.post("/users/create", json=users_create_data)
     response_data = response.json()
-    assert response_data["user_id"] == 6
+    assert response_data["user_id"] == 1
     assert response.status_code == status.HTTP_200_OK
     assert response_data["email"] == users_create_data["email"]
     assert response_data["points"] == 10000
