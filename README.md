@@ -30,6 +30,10 @@ To run the test container using Docker Compose:
 
     sudo docker compose -f docker-compose.test.yml up --build -d
 
+To see the output of the tests do:
+
+    sudo docker logs shop_api-test
+
 When running the tests above more than once, reset the database volume in between the runs like:
 
     sudo docker compose -f docker-compose.test.yml down
