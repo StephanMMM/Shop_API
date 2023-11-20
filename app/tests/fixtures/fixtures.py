@@ -74,6 +74,12 @@ def products_update_data():
     }
     return data
 
+@pytest.fixture
+def products_delete_data():
+    data = {
+        "product_id": 5
+    }
+    return data
 
 @pytest.fixture
 def order_data():
@@ -84,3 +90,4 @@ def order_data():
         "quantity": 2
     }
     return data
+
