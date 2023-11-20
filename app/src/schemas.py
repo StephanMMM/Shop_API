@@ -26,6 +26,9 @@ class ProductUpdate(BaseModel):
     price: int | None = None
     owner_id: int | None = None
 
+class ProductDelete(BaseModel):
+    product_id: int
+
 ### User Models ###
 class UserBase(BaseModel):
     email: str

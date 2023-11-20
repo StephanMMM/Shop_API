@@ -82,9 +82,9 @@ def update_product(product: schemas.ProductUpdate, db: Session):
     db.refresh(existing_product)
     return existing_product
 
-def delete_product(product_id: int, db: Session):
+def delete_product(product: schemas.ProductUpdate, db: Session):
     try:
-        deletion_product = db.get(models.Products, product_id)
+        deletion_product = db.get(models.Products, product.product_id)
         if deletion_product is None:
             raise KeyError("Product does not exist.")
         db.delete(deletion_product)
@@ -95,7 +95,7 @@ def delete_product(product_id: int, db: Session):
     except IntegrityError as e:
         logger.error(e)
         db.rollback()
-    return deletion_product
+    return
 
 def create_order(order: schemas.OrderCreate, db: Session):
     try:
@@ -112,9 +112,9 @@ def create_order(order: schemas.OrderCreate, db: Session):
             raise ValueError("Product does not belong to the seller.")
         if buyer.points - product.price * order.quantity < 0:
             raise ValueError("Buyer does not have enough points.")
-
     except ValueError as e:
         logger.error(e)
+
     new_order = models.Orders(seller_id=order.seller_id,
                               buyer_id=order.buyer_id,
                               product_id=order.product_id,

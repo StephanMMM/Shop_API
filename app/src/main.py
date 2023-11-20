@@ -34,9 +34,9 @@ async def update_product(product: schemas.ProductUpdate, db: Session = Depends(g
     return updated_product
 
 @app.delete("/products/delete", response_model=schemas.Product)
-async def delete_product(product_id: int, db: Session = Depends(get_db)):
-    deleted_product = db_crud.delete_product(product_id, db)
-    return deleted_product
+async def delete_product(product: schemas.ProductDelete, db: Session = Depends(get_db)):
+    db_crud.delete_product(product, db)
+    return
 
 @app.post("/order", response_model=schemas.Order)
 async def create_order(order: schemas.OrderCreate, db: Session = Depends(get_db)):
