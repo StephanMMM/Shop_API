@@ -24,9 +24,13 @@ Then, start the application using Docker Compose:
 
     sudo docker compose up --build -d
 
+Stop the application by:
+
+    sudo docker compose down
+
 Once the API container is running, you can access the interactive documentation at http://127.0.0.1/docs.
 
-To run the test container using Docker Compose:
+To run the test container using Docker Compose (stop the application before running tests):
 
     sudo docker compose -f docker-compose.test.yml up --build -d
 
