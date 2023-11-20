@@ -7,19 +7,9 @@ from sqlalchemy.orm import Session, sessionmaker
 from sqlalchemy.orm.session import close_all_sessions
 from sqlalchemy_utils import database_exists, drop_database
 
+from .testdata import add_user_test_data, add_product_test_data, add_test_order_data
 from ...src import main, models, database
 
-# TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=database.engine)
-# database.Base.metadata.create_all(bind=database.engine)
-#
-# def override_get_db():
-#     try:
-#         db = TestingSessionLocal()
-#         yield db
-#     finally:
-#         db.close()
-#
-# main.app.dependency_overrides[main.get_db] = override_get_db
 test_client = TestClient(main.app)
 
 @pytest.fixture(scope="function")
@@ -37,6 +27,9 @@ def temp_test_db():
     db = TestingSessionLocal()
 
     def get_db_for_testing():
+        add_user_test_data(db)
+        add_product_test_data(db)
+        add_test_order_data(db)
         try:
             yield db
             db.commit()
@@ -50,20 +43,12 @@ def temp_test_db():
     close_all_sessions()
     database.engine.dispose()
 
-
 @pytest.fixture
 def users_create_data():
     data = {
         "email": "test@example.com",
         "password_plain": "testword123",
         "shipping_address": "Dokoka in Japan, 000-1234"
-    }
-    return data
-def users_create_data_2():
-    data = {
-        "email": "second@example.com",
-        "password_plain": "testword",
-        "shipping_address": "Somewhere, 123456"
     }
     return data
 
@@ -93,8 +78,8 @@ def products_update_data():
 @pytest.fixture
 def order_data():
     data = {
-        "buyer_id": 1,
-        "seller_id": 2,
+        "buyer_id": 2,
+        "seller_id": 1,
         "product_id": 1,
         "quantity": 2
     }
