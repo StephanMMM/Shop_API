@@ -120,15 +120,15 @@ def create_order(order: schemas.OrderCreate, db: Session):
                               product_id=order.product_id,
                               quantity=order.quantity,
                               date=datetime.datetime.now())
-    updated_buyer = update_user(models.Users(user_id=buyer.user_id,
-                                             points=(buyer.points-(order.quantity*product.price))),
+    updated_buyer = update_user(schemas.UserUpdate(user_id=buyer.user_id,
+                                                   points=(buyer.points - (order.quantity * product.price))),
                                 db)
-    updated_seller = update_user(models.Users(user_id=seller.user_id,
-                                              points=(seller.points + (order.quantity * product.price))),
+    updated_seller = update_user(schemas.UserUpdate(user_id=seller.user_id,
+                                                    points=(seller.points + (order.quantity * product.price))),
                                  db)
-    db.add(new_order,
-           updated_buyer,
-           updated_seller)
+    db.add(new_order)
+    db.add(updated_buyer)
+    db.add(updated_seller)
     try:
         db.flush()
         db.commit()
