@@ -35,10 +35,10 @@ def add_product_test_data(db):
 
 def add_test_order_data(db):
     test_order_data = [
-        Orders(order_id=1, buyer_id=1, seller_id=2, product_id=1, quantity=1, date="2023-11-15"),
-        Orders(order_id=2, buyer_id=2, seller_id=3, product_id=2, quantity=1, date="2023-11-16"),
-        Orders(order_id=3, buyer_id=3, seller_id=4, product_id=3, quantity=1, date="2023-11-17"),
-        Orders(order_id=4, buyer_id=4, seller_id=5, product_id=4, quantity=1, date="2023-11-16"),
-        Orders(order_id=5, buyer_id=5, seller_id=1, product_id=5, quantity=1, date="2023-11-17"),
+        Orders(order_id=1, buyer_id=1, seller_id=2, product_id=2, quantity=1, date="2023-11-15"),
+        Orders(order_id=2, buyer_id=2, seller_id=3, product_id=3, quantity=1, date="2023-11-16"),
+        Orders(order_id=3, buyer_id=3, seller_id=4, product_id=4, quantity=1, date="2023-11-17"),
+        Orders(order_id=4, buyer_id=4, seller_id=5, product_id=5, quantity=1, date="2023-11-16"),
+        Orders(order_id=5, buyer_id=5, seller_id=1, product_id=1, quantity=1, date="2023-11-17"),
     ]
     db.bulk_save_objects(test_order_data)
